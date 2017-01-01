@@ -1,0 +1,1197 @@
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import  java.util.Arrays;
+import java.util.ArrayList;
+public class sudoku 
+{	
+	public static void main(String args[])
+	{
+		graphics gp = new graphics();
+		gp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gp.setLocation(700,100);
+		gp.setSize(415,480);
+		gp.setVisible(true);
+		gp.setResizable(false);
+	}
+}
+
+class graphics extends  JFrame
+{
+	JTextField box[] = new JTextField[81];
+	private JPanel panel,board,buttonSpace;
+	private JPanel panel1,panel2,panel3,panel4,panel5,panel6,panel7,panel8,panel9;
+	private JButton button,resetButton; 
+	
+	public graphics()
+	{
+		super("SUDOKU SOLVER");
+		panel = new JPanel();
+		add(panel);
+		board = new JPanel(new GridLayout(3,3,2,2));
+		board.setBackground(new Color(100,100,100));
+		board.setPreferredSize(new Dimension(400,400));
+		panel.add(board);
+		buttonSpace = new JPanel();
+		buttonSpace.setPreferredSize(new Dimension(400,80));
+		panel.add(buttonSpace);
+		button = new JButton("SOLVE");
+		buttonSpace.add(button);
+		resetButton = new JButton("RESET");
+		resetButton.addActionListener(
+						new ActionListener()
+						{
+							public void actionPerformed(ActionEvent event)
+							{
+								for(int i=0;i<81;i++)
+								{
+									box[i].setText("");
+									box[i].setForeground(Color.RED);
+								}	
+							}
+						}
+					);
+		buttonSpace.add(resetButton);
+		handler handle = new handler();
+		button.addActionListener(handle);
+
+		for(int i=0;i<81;i++)
+		{
+			box[i] = new JTextField();
+		}
+
+		panel1 = new JPanel(new GridLayout(3,3));
+		board.add(panel1);
+		for(int i=0;i<9;i++)
+		{
+			panel1.add(box[i]);
+		}
+
+		panel2 = new JPanel(new GridLayout(3,3));
+		board.add(panel2);
+		for(int i=9;i<18;i++)
+		{
+			panel2.add(box[i]);
+		}
+		
+		panel3 = new JPanel(new GridLayout(3,3));
+		board.add(panel3);
+		for(int i=18;i<27;i++)
+		{
+			panel3.add(box[i]);
+		}
+
+		panel4 = new JPanel(new GridLayout(3,3));
+		board.add(panel4);
+		for(int i=27;i<36;i++)
+		{
+			panel4.add(box[i]);
+		}
+
+		panel5 = new JPanel(new GridLayout(3,3));
+		board.add(panel5);
+		for(int i=36;i<45;i++)
+		{
+			panel5.add(box[i]);
+		}
+
+		panel6 = new JPanel(new GridLayout(3,3));
+		board.add(panel6);
+		for(int i=45;i<54;i++)
+		{
+			panel6.add(box[i]);
+		}
+
+		panel7 = new JPanel(new GridLayout(3,3));
+		board.add(panel7);
+		for(int i=54;i<63;i++)
+		{
+			panel7.add(box[i]);
+		}
+
+		panel8 = new JPanel(new GridLayout(3,3));
+		board.add(panel8);
+		for(int i=63;i<72;i++)
+		{
+			panel8.add(box[i]);
+		}
+
+		panel9 = new JPanel(new GridLayout(3,3));
+		board.add(panel9);
+		for(int i=72;i<81;i++)
+		{
+			panel9.add(box[i]);
+		}
+		
+		for(int i=0;i<81;i++)
+		{
+			box[i].setForeground(Color.RED);
+			box[i].setHorizontalAlignment(box[i].CENTER);
+		}
+	}
+
+	class handler implements ActionListener
+	{	@SuppressWarnings("unchecked")
+		public void actionPerformed(ActionEvent event)
+		{	
+			String rowValues[][] = {{box[0].getText(),box[1].getText(),box[2].getText(),box[9].getText(),box[10].getText(),box[11].getText(),box[18].getText(),
+						box[19].getText(),box[20].getText()},
+					{box[3].getText(),box[4].getText(),box[5].getText(),box[12].getText(),box[13].getText(),box[14].getText(),box[21].getText(),box[22].getText(),
+						box[23].getText()},
+					{box[6].getText(),box[7].getText(),box[8].getText(),box[15].getText(),box[16].getText(),box[17].getText(),box[24].getText(),box[25].getText(),
+						box[26].getText()},
+					{box[27].getText(),box[28].getText(),box[29].getText(),box[36].getText(),box[37].getText(),box[38].getText(),box[45].getText(),
+						box[46].getText(),box[47].getText()},
+					{box[30].getText(),box[31].getText(),box[32].getText(),box[39].getText(),box[40].getText(),box[41].getText(),box[48].getText(),
+						box[49].getText(),box[50].getText()},
+					{box[33].getText(),box[34].getText(),box[35].getText(),box[42].getText(),box[43].getText(),box[44].getText(),box[51].getText(),		
+
+						box[52].getText(),box[53].getText()},
+					{box[54].getText(),box[55].getText(),box[56].getText(),box[63].getText(),box[64].getText(),box[65].getText(),box[72].getText(),		
+
+						box[73].getText(),box[74].getText()},
+					{box[57].getText(),box[58].getText(),box[59].getText(),box[66].getText(),box[67].getText(),box[68].getText(),box[75].getText(),		
+
+						box[76].getText(),box[77].getText()},
+					{box[60].getText(),box[61].getText(),box[62].getText(),box[69].getText(),box[70].getText(),box[71].getText(),box[78].getText(),		
+
+						box[79].getText(),box[80].getText()}};
+
+			String colValues[][] = {{box[0].getText(),box[3].getText(),box[6].getText(),box[27].getText(),box[30].getText(),box[33].getText(),box[54].getText(),			
+
+					box[57].getText(),box[60].getText()},
+					{box[1].getText(),box[4].getText(),box[7].getText(),box[28].getText(),box[31].getText(),box[34].getText(),box[55].getText(),			
+
+						box[58].getText(),box[61].getText()},
+					{box[2].getText(),box[5].getText(),box[8].getText(),box[29].getText(),box[32].getText(),box[35].getText(),box[56].getText(),			
+
+						box[59].getText(),box[62].getText()},
+					{box[9].getText(),box[12].getText(),box[15].getText(),box[36].getText(),box[39].getText(),box[42].getText(),box[63].getText(),			
+
+						box[66].getText(),box[69].getText()},
+					{box[10].getText(),box[13].getText(),box[16].getText(),box[37].getText(),box[40].getText(),box[43].getText(),box[64].getText(),		
+
+						box[67].getText(),box[70].getText()},
+					{box[11].getText(),box[14].getText(),box[17].getText(),box[38].getText(),box[41].getText(),box[44].getText(),box[65].getText(),		
+
+						box[68].getText(),box[71].getText()},
+					{box[18].getText(),box[21].getText(),box[24].getText(),box[45].getText(),box[48].getText(),box[51].getText(),box[72].getText(),		
+
+						box[75].getText(),box[78].getText()},
+					{box[19].getText(),box[22].getText(),box[25].getText(),box[46].getText(),box[49].getText(),box[52].getText(),box[73].getText(),		
+
+						box[76].getText(),box[79].getText()},
+					{box[20].getText(),box[23].getText(),box[26].getText(),box[47].getText(),box[50].getText(),box[53].getText(),box[74].getText(),		
+
+						box[77].getText(),box[80].getText()}};	
+
+			String gridValues[][] = {{box[0].getText(),box[1].getText(),box[2].getText(),box[3].getText(),box[4].getText(),box[5].getText(),box[6].getText(),box[7].getText(),
+						box[8].getText()},
+			 		{box[9].getText(),box[10].getText(),box[11].getText(),box[12].getText(),box[13].getText(),box[14].getText(),box[15].getText(),
+						box[16].getText(),box[17].getText()},
+			 		{box[18].getText(),box[19].getText(),box[20].getText(),box[21].getText(),box[22].getText(),box[23].getText(),box[24].getText(),
+						box[25].getText(),box[26].getText()},
+					{box[27].getText(),box[28].getText(),box[29].getText(),box[30].getText(),box[31].getText(),box[32].getText(),box[33].getText(),
+						box[34].getText(),box[35].getText()},
+					 {box[36].getText(),box[37].getText(),box[38].getText(),box[39].getText(),box[40].getText(),box[41].getText(),box[42].getText(),
+						box[43].getText(),box[44].getText()},
+					{box[45].getText(),box[46].getText(),box[47].getText(),box[48].getText(),box[49].getText(),box[50].getText(),box[51].getText(),
+						box[52].getText(),box[53].getText()},	
+					{box[54].getText(),box[55].getText(),box[56].getText(),box[57].getText(),box[58].getText(),box[59].getText(),box[60].getText(),
+						box[61].getText(),box[62].getText()},	
+					{box[63].getText(),box[64].getText(),box[65].getText(),box[66].getText(),box[67].getText(),box[68].getText(),box[69].getText(),
+						box[70].getText(),box[71].getText()},
+					{box[72].getText(),box[73].getText(),box[74].getText(),box[75].getText(),box[76].getText(),box[77].getText(),box[78].getText(),
+						box[79].getText(),box[80].getText()}};
+
+			
+
+			int rowBoxes[][]={{0,1,2,9,10,11,18,19,20},{3,4,5,12,13,14,21,22,23},{6,7,8,15,16,17,24,25,26},{27,28,29,36,37,38,45,46,47},{30,31,32,39,40,41,48,49,50},	
+
+				{33,34,35,42,43,44,51,52,53},{54,55,56,63,64,65,72,73,74},{57,58,59,66,67,68,75,76,77},{60,61,62,69,70,71,78,79,80}};
+
+			int colBoxes[][]={{0,3,6,27,30,33,54,57,60},{1,4,7,28,31,34,55,58,61},{2,5,8,29,32,35,56,59,62},{9,12,15,36,39,42,63,66,69},{10,13,16,37,40,43,64,67,70},	
+
+					{11,14,17,38,41,44,65,68,71},{18,21,24,45,48,51,72,75,78},{19,22,25,46,49,52,73,76,79},{20,23,26,47,50,53,74,77,80}};
+
+			int gridBoxes[][]={{0,1,2,3,4,5,6,7,8},{9,10,11,12,13,14,15,16,17},{18,19,20,21,22,23,24,25,26},{27,28,29,30,31,32,33,34,35},{36,37,38,39,40,41,42,43,44},	
+
+				{45,46,47,48,49,50,51,52,53},{54,55,56,57,58,59,60,61,62},{63,64,65,66,67,68,69,70,71},{72,73,74,75,76,77,78,79,80}};
+
+			ArrayList options[] = new ArrayList[81];
+			for(int m=0;m<81;m++)
+			{	
+				options[m] = new ArrayList<String>();
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[0].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[1].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[2].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[3].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[4].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[5].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[6].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[7].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[0]).contains(value))
+				{
+					options[8].add(value);
+				}
+			}			
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[9].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[10].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[11].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[12].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[13].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[14].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[15].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[16].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[1]).contains(value))
+				{
+					options[17].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[18].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[19].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[0]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[20].add(value);
+				}
+			}
+		
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[21].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[22].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[1]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[23].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[24].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[25].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[2]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[2]).contains(value))
+				{
+					options[26].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[27].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[28].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[29].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[30].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[31].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[32].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[33].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[34].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[3]).contains(value))
+				{
+					options[35].add(value);
+				}
+			}			
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[36].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[37].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[38].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[39].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[40].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[41].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[42].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[43].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[4]).contains(value))
+				{
+					options[44].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[45].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[46].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[3]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[47].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[48].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[49].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[4]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[50].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[51].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[52].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[5]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[5]).contains(value))
+				{
+					options[53].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[54].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[55].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[56].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[57].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[58].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[59].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[0]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[60].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[1]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[61].add(value);
+				}
+			}
+			
+			for(int j=1;j<10;j++)
+			{	
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[2]).contains(value) && !Arrays.asList(gridValues[6]).contains(value))
+				{
+					options[62].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[63].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[64].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[65].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[66].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[67].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[68].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[3]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[69].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[4]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[70].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[5]).contains(value) && !Arrays.asList(gridValues[7]).contains(value))
+				{
+					options[71].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[72].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[73].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[6]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[74].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[75].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[76].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[7]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[77].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[6]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[78].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[7]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[79].add(value);
+				}
+			}
+
+			for(int j=1;j<10;j++)
+			{
+				String value = Integer.toString(j);
+				if(!Arrays.asList(rowValues[8]).contains(value) && !Arrays.asList(colValues[8]).contains(value) && !Arrays.asList(gridValues[8]).contains(value))
+				{
+					options[80].add(value);
+				}
+			}
+
+			//This is to remove the options of the filled blocks
+			for(int i=0;i<81;i++)
+			{
+				if(!box[i].getText().equals(""))
+				{	
+					options[i].removeAll(options[i]);
+				}
+			}	
+		
+			// now solving and filling the blocks
+			//color of solved numbers.
+			for(int i=0;i<81;i++)
+			{	if(box[i].getText().equals(""))
+				{
+					box[i].setForeground(Color.BLACK);
+				}
+			}
+
+			/*
+			If in a row or in a cloumn or in a grid , two  blocks contains two same numbers option which can be put in that blocks and there are no other option for any of that 	
+
+			blocks except that two same numbers, then removing that numbers from the options of all the blocks in that corresponding row or column or grid.
+			*/
+			for(int i=0;i<9;i++)
+			{
+				for(int x : rowBoxes[i])
+				{
+					for(int y : rowBoxes[i])
+					{
+						if(options[y].size() == 2 && y != x && options[x].size() == 2)
+						{
+							if(options[x].equals(options[y]))
+							{
+								for(int z : rowBoxes[i])
+								{	
+									if(z != x && z != y)									
+
+									{										
+
+										options[z].removeAll(options[y]);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				for(int x : colBoxes[i])
+				{
+					for(int y : colBoxes[i])
+					{
+						if(options[y].size() == 2 && y != x && options[x].size() == 2)
+						{
+							if(options[x].equals(options[y]))
+							{
+								for(int z : colBoxes[i])
+								{	
+									if(z != x && z != y)									
+
+									{										
+
+										options[z].removeAll(options[y]);
+									}
+								}
+							}
+						}
+					}
+				}
+
+				for(int x : gridBoxes[i])
+				{
+					for(int y : gridBoxes[i])
+					{
+						if(options[y].size() == 2 && y != x && options[x].size() == 2)
+						{
+							if(options[x].equals(options[y]))
+							{
+								for(int z : gridBoxes[i])
+								{	
+									if(z != x && z != y)									
+
+									{										
+
+										options[z].removeAll(options[y]);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//if a box will have only a single option i.e single number to put.
+			for(int k=0;k<81;k++)
+			{
+				if(options[k].size() == 1 && box[k].getText().equals("") )
+				{	
+					int rem1 = (k+1)%9;
+					int gridNumber = (k+1)/9 ;
+					int rowNumber,colNumber;
+
+					int d = rem1/3;
+					int t = rem1%3;
+					if(t == 0 && rem1 != 0)
+					{
+						d--;
+					} 
+
+					if(rem1 == 0)
+					{
+						gridNumber--;
+						d = 2;
+					}
+
+					if(rem1 == 3 || rem1 == 6 || rem1 == 0)
+					{
+						t = 3;
+					}					
+
+					if(gridNumber <= 2)
+					{
+						rowNumber = d;
+					}
+					else if(gridNumber <= 5)
+					{
+						rowNumber = 3 + d;
+					}
+					else
+					{
+						rowNumber = 6 + d;
+					}
+
+					colNumber = (((gridNumber%3)*3) + t) - 1;
+
+					for(int x : rowBoxes[rowNumber])
+					{
+						if(options[x].containsAll(options[k]))
+						{	
+							if(x != k)
+							{
+								options[x].removeAll(options[k]);
+							}
+						}
+					}
+
+					for(int y : colBoxes[colNumber])
+					{
+						if(options[y].containsAll(options[k]))
+						{	
+							if(y != k)
+							{
+								options[y].removeAll(options[k]);
+							}
+						}
+					}
+
+					for(int z : gridBoxes[gridNumber])
+					{
+						if(options[z].containsAll(options[k]))
+						{	
+							if(z != k)
+							{
+								options[z].removeAll(options[k]);
+							}
+						}
+					}
+
+					box[k].setText((String)options[k].get(0));	
+				}
+			}
+
+			//if there is a single block for any of the number in a row or in a column or in a grid.
+			for(int i=0;i<9;i++)
+			{
+				for(int j=1;j<10;j++)
+				{
+					int temp = 0;
+					int count = 0;
+					for(int x : rowBoxes[i])
+					{
+						if(options[x].contains(Integer.toString(j)))
+						{
+							count++;	
+							temp = x;
+						}	
+					}
+
+					if(count == 1)
+					{	
+						box[temp].setText(Integer.toString(j));
+					}
+				}
+
+				for(int j=1;j<10;j++)
+				{
+					int temp = 0;
+					int count = 0;
+					for(int x : colBoxes[i])
+					{
+						if(options[x].contains(Integer.toString(j)))
+						{
+							count++;	
+							temp = x;
+						}	
+					}
+
+					if(count == 1)
+					{	
+						box[temp].setText(Integer.toString(j));
+					}
+				}
+
+				for(int j=1;j<10;j++)
+				{
+					int temp = 0;
+					int count = 0;
+					for(int x : gridBoxes[i])
+					{
+						if(options[x].contains(Integer.toString(j)))
+						{
+							count++;	
+							temp = x;
+						}	
+					}
+
+					if(count == 1)
+					{	
+						box[temp].setText(Integer.toString(j));
+					}
+				}
+			}
+
+			for(int i=0;i<81;i++)
+			{	
+				if(box[i].getText().equals(""))
+				{
+					actionPerformed(event);
+				}
+			}
+		}
+	}		
+}
